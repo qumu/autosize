@@ -127,13 +127,14 @@ function assign(ta) {
 	function update() {
 		resize();
 
-		const styleHeight = Math.round(parseFloat(ta.style.height));
+    const scrollHeight = ta.scrollHeight;
+    const styleHeight = Math.round(parseFloat(ta.style.height));
 		const computed = window.getComputedStyle(ta, null);
 
 		// Using offsetHeight as a replacement for computed.height in IE, because IE does not account use of border-box
 		var actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(computed.height)) : ta.offsetHeight;
 
-		// The actual height not matching the style height (set via the resize method) indicates that 
+		// The actual height not matching the style height (set via the resize method) indicates that
 		// the max-height has been exceeded, in which case the overflow should be allowed.
 		if (actualHeight < styleHeight) {
 			if (computed.overflowY === 'hidden') {
@@ -141,7 +142,14 @@ function assign(ta) {
 				resize();
 				actualHeight = computed.boxSizing === 'content-box' ? Math.round(parseFloat(window.getComputedStyle(ta, null).height)) : ta.offsetHeight;
 			}
-		} else {
+		}
+    // If the scrollHeight is higher than the styleHeight at this point, it means that the textearea is taller than its parent and a scrollbar appeared
+    // Due to the scrollbar added to the parent, the textarea is now a little narrower and therefore the height needs to be updated accordingly
+    else if(scrollHeight > styleHeight) {
+      ta.style.height = `${scrollHeight}px`;
+      actualHeight = computed.boxSizing === 'content-box' ? scrollHeight : ta.offsetHeight;
+    }
+		else {
 			// Normally keep overflow set to hidden, to avoid flash of scrollbar as the textarea expands.
 			if (computed.overflowY !== 'hidden') {
 				changeOverflow('hidden');
