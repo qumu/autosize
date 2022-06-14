@@ -127,8 +127,8 @@ function assign(ta) {
 	function update() {
 		resize();
 
-    const scrollHeight = ta.scrollHeight;
-    const styleHeight = Math.round(parseFloat(ta.style.height));
+		const scrollHeight = ta.scrollHeight;
+		const styleHeight = Math.round(parseFloat(ta.style.height));
 		const computed = window.getComputedStyle(ta, null);
 
 		// Using offsetHeight as a replacement for computed.height in IE, because IE does not account use of border-box
